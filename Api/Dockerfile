@@ -17,4 +17,12 @@ RUN dotnet publish "Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+EXPOSE 8080
+ENV ASPNETCORE_URLS http://+:8080
+
+# Fixes startup issue when running on read-only file system
+# See https://github.com/dotnet/docs/issues/10217#issuecomment-462323277
+ENV COMPlus_EnableDiagnostics=0
+
 ENTRYPOINT ["dotnet", "Api.dll"]
